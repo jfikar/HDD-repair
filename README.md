@@ -1,12 +1,16 @@
 # HDD-repair
-A shell script to remap bad blocks on a HDD using hdparm --read-sector and --write-sector. They unfortunately work only with 512B sectors and most of the HDD use 4kB sectors.
+A shell script to remap bad blocks on a HDD using ``hdparm --read-sector`` and ``hdparm --write-sector``. The hdparm commands unfortunately work only with 512B sectors and most of the HDD use 4kB sectors. The script accomodates for that.
 
-Don't run the script on the whole disk as it is very slow (0.3 MB/s). Insted do
+First set the DISK, START and STOP variables in the script. The DISK is the borken disk e.g. /dev/sdd. START and STOP is the LBA range, where you want to look for bad blocks by ``hdparm --read-sector``. If a bad block is found, it is rewriten by zeros using ``hdparm --write-sector`` and the disk logic will reallocate that sector to the spair sectors.
+
+Don't run the script on the whole disk as it is very slow (0.3 MB/s). Insted check the whole disk by quickly reading all the sectors by dd and omiting the errors
 
 ```sudo dd if=/dev/sdd bs=1M of=/dev/null conv=noerror status=progress```
 
 This is much faster (>200 MB/s) and the LBA of the bad blocks are then easily found in dmesg using
 ```dmesg | grep error | grep sector | sort -n -k 9```
+
+(Note, that the ``hdparm --read-sector`` and ``hdparm --write-sector`` commands talk directly to the HDD and these errors are not logged in dmesg.)
 
 You'll get for example
 
