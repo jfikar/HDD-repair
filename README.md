@@ -59,6 +59,12 @@ You'll get for example
 [  +0.000003] critical medium error, dev sdd, sector 6465972816 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 2
 ```
 
+Note, do not look at the logical blocks errors, as these are not the device LBAs, but it is LBA/8, as it is in 4kB units.
+```
+[  +0.000005] Buffer I/O error on dev sdd, logical block 808246602, async page read
+```
+
+
 In this case I'd search the bad blocks in the scipt in the range 28330176-28332176, 28342904-28345904, 1707598560-1707600560, etc. You get the range from the LBA error in dmesg -1000 and +1000, so it is just 1MB long.
 
 Example of the script output:
